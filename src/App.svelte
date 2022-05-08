@@ -7,12 +7,11 @@
   let items = []
   let isLoading = true
 
-  const displayItems = numberOfCategories =>
-    numberOfCategories === items.length && (isLoading = false)
+  const displayItems = () => (isLoading = false)
 
-  const setItems = (faqs, category, numberOfCategories) => {
-    const sortBySlug = (a, b) => (a.slug > b.slug ? 1 : -1)
+  const sortItems = () => items.sort((a, b) => (a.slug > b.slug ? 1 : -1))
 
+  const setItems = (faqs, category, categoriesLength) => {
     items = [
       ...items,
       {
@@ -20,28 +19,28 @@
         name: category.name,
         faqs,
       },
-    ].sort(sortBySlug)
+    ]
 
-    displayItems(numberOfCategories)
+    items.length === categoriesLength && sortItems() && displayItems()
   }
 
-  const getFaqs = (category, numberOfCategories) => {
+  const getFaqs = (category, categoriesLength) => {
     fetch(URL + 'faqs?faq-cats=' + category.id)
       .then(res => res.json())
-      .then(faqs => setItems(faqs, category, numberOfCategories))
+      .then(faqs => setItems(faqs, category, categoriesLength))
   }
 
-  const getCategories = (_, route) => {
-    fetch(URL + route)
+  const getCategories = () => {
+    fetch(URL + 'faq-cats')
       .then(res => res.json())
       .then(categories => {
-        const numberOfCategories = categories.length
-        categories.forEach(category => getFaqs(category, numberOfCategories))
+        const categoriesLength = categories.length
+        categories.forEach(category => getFaqs(category, categoriesLength))
       })
   }
 </script>
 
-<div use:getCategories={'faq-cats'}>
+<div use:getCategories>
   {#if !isLoading}
     {#each items as item}
       <h2>{item.name}</h2>
