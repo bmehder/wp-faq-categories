@@ -1,14 +1,17 @@
 <script>
   import { scale } from 'svelte/transition'
+
   import Loading from './Loading.svelte'
   import Faq from './Faq.svelte'
 
   const URL = 'https://sprucehealthgroup.com/wp-json/wp/v2/'
+  const FAQ_CATS = 'faq-cats'
+  const FAQS_BY_CATS = 'faqs?faq-cats'
 
   let items = []
-  let isLoading = true
+  let isLoaded = false
 
-  const displayItems = () => (isLoading = false)
+  const displayItems = () => (isLoaded = true)
 
   const sortItems = () => items.sort((a, b) => (a.slug > b.slug ? 1 : -1))
 
@@ -26,23 +29,25 @@
   }
 
   const getFaqs = (category, categoriesLength) => {
-    fetch(URL + 'faqs?faq-cats=' + category.id)
+    fetch(`${URL}${FAQS_BY_CATS}=${category.id}`)
       .then(res => res.json())
       .then(faqs => setItems(faqs, category, categoriesLength))
+      .catch(error => console.log('getFaqs:', error))
   }
 
   const getCategories = () => {
-    fetch(URL + 'faq-cats')
+    fetch(URL + FAQ_CATS)
       .then(res => res.json())
       .then(categories => {
         const categoriesLength = categories.length
         categories.forEach(category => getFaqs(category, categoriesLength))
       })
+      .catch(error => console.log('getCategories:', error))
   }
 </script>
 
 <div use:getCategories>
-  {#if !isLoading}
+  {#if isLoaded}
     <div in:scale>
       {#each items as item}
         <h2>{item.name}</h2>
