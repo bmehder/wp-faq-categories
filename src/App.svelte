@@ -1,4 +1,5 @@
 <script>
+  import { scale } from 'svelte/transition'
   import Loading from './Loading.svelte'
   import Faq from './Faq.svelte'
 
@@ -42,12 +43,14 @@
 
 <div use:getCategories>
   {#if !isLoading}
-    {#each items as item}
-      <h2>{item.name}</h2>
-      {#each item.faqs as faq}
-        <Faq {faq} />
+    <div in:scale>
+      {#each items as item}
+        <h2>{item.name}</h2>
+        {#each item.faqs as faq}
+          <Faq {faq} />
+        {/each}
       {/each}
-    {/each}
+    </div>
   {:else}
     <Loading />
   {/if}
