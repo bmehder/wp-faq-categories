@@ -6,7 +6,7 @@
 
   const URL = 'https://sprucehealthgroup.com/wp-json/wp/v2/'
   const FAQ_CATS = 'faq-cats'
-  const FAQS_BY_CATS = 'faqs?faq-cats'
+  const FAQS_BY_CAT = 'faqs?faq-cats'
 
   let items = []
   let isLoaded = false
@@ -29,7 +29,7 @@
   }
 
   const getFaqs = (category, categoriesLength) => {
-    fetch(`${URL}${FAQS_BY_CATS}=${category.id}`)
+    fetch(`${URL}${FAQS_BY_CAT}=${category.id}`)
       .then(res => res.json())
       .then(faqs => setItems(faqs, category, categoriesLength))
       .catch(error => console.log('getFaqs:', error))
