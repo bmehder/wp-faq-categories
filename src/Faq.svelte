@@ -21,7 +21,7 @@
     <i class:isOpen class="fa-solid fa-chevron-down" />
   </h3>
   {#if isOpen}
-    <div transition:slide>{@html faq.content.rendered}</div>
+    <div class="answer" transition:slide>{@html faq.content.rendered}</div>
   {/if}
 </div>
 
