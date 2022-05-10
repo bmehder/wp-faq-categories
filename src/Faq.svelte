@@ -15,13 +15,13 @@
   />
 </svelte:head>
 
-<div>
+<div class="faqs">
   <h3 class="question" on:click={handleClick}>
     <span>{faq.title.rendered}</span>
     <i class:isOpen class="fa-solid fa-chevron-down" />
   </h3>
   {#if isOpen}
-    <p transition:slide>{@html faq.content.rendered}</p>
+    <div transition:slide>{@html faq.content.rendered}</div>
   {/if}
 </div>
 

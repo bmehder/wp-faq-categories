@@ -11,11 +11,9 @@
   let items = []
   let isLoaded = false
 
-  const displayItems = () => (isLoaded = true)
+  const sortBySlug = arr => arr.sort((a, b) => (a.slug > b.slug ? 1 : -1))
 
-  const sortItems = () => items.sort((a, b) => (a.slug > b.slug ? 1 : -1))
-
-  const setItems = (faqs, category, categoriesLength) => {
+  const setItems = (category, categoriesLength, faqs) => {
     items = [
       ...items,
       {
@@ -25,33 +23,34 @@
       },
     ]
 
-    items.length === categoriesLength && sortItems() && displayItems()
+    return new Promise(resolve => items.length === categoriesLength && resolve(items))
   }
 
   const getFaqs = (category, categoriesLength) => {
     fetch(`${URL}${FAQS_BY_CAT}=${category.id}`)
       .then(res => res.json())
-      .then(faqs => setItems(faqs, category, categoriesLength))
+      .then(faqs => setItems(category, categoriesLength, faqs))
+      .then(items => sortBySlug(items) && (isLoaded = true))
       .catch(error => console.log('getFaqs:', error))
+      .finally(() => window.dispatchEvent(new CustomEvent('csrend')))
   }
 
   const getCategories = () => {
     fetch(URL + FAQ_CATS)
       .then(res => res.json())
-      .then(categories => {
-        const categoriesLength = categories.length
-        categories.forEach(category => getFaqs(category, categoriesLength))
-      })
+      .then(categories => categories.forEach(category => getFaqs(category, categories.length)))
       .catch(error => console.log('getCategories:', error))
   }
 </script>
 
+<svelte:window on:csrend={() => console.log('I am finished loading')} />
+
 <div use:getCategories>
   {#if isLoaded}
     <div in:scale>
-      {#each items as item}
-        <h2>{item.name}</h2>
-        {#each item.faqs as faq}
+      {#each items as { name, faqs }}
+        <h2>{name}</h2>
+        {#each faqs as faq}
           <Faq {faq} />
         {/each}
       {/each}
