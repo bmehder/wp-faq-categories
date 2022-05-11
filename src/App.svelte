@@ -30,9 +30,9 @@
     fetch(`${URL}${FAQS_BY_CAT}=${category.id}`)
       .then(res => res.json())
       .then(faqs => setItems(category, categoriesLength, faqs))
-      .then(items => sortBySlug(items) && (isLoaded = true))
+      .then(items => sortBySlug(items))
       .catch(error => console.log('getFaqs:', error))
-      .finally(() => window.dispatchEvent(new CustomEvent('csrend')))
+      .finally(() => (isLoaded = true && window.dispatchEvent(new CustomEvent('csrend'))))
   }
 
   const getCategories = () => {
