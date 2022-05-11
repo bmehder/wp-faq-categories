@@ -6,6 +6,8 @@
   let isOpen = false
 
   const handleClick = () => (isOpen = !isOpen)
+
+  const handleKeypress = evt => evt.key === 'Enter' && handleClick()
 </script>
 
 <svelte:head>
@@ -16,7 +18,7 @@
 </svelte:head>
 
 <div class="faqs">
-  <h3 class="question" on:click={handleClick} on:keypress={e => e.key === 'Enter' && handleClick()}>
+  <h3 class="question" on:click={handleClick} on:keypress={handleKeypress}>
     <span>{faq.title.rendered}</span>
     <i class:isOpen class="fa-solid fa-chevron-down" />
   </h3>
