@@ -14,14 +14,8 @@
   const sortBySlug = arr => arr.sort((a, b) => (a.slug > b.slug ? 1 : -1))
 
   const setItems = (category, categoriesLength, faqs) => {
-    items = [
-      ...items,
-      {
-        slug: category.slug,
-        name: category.name,
-        faqs,
-      },
-    ]
+    const { slug, name } = category
+    items = [...items, { slug, name, faqs }]
 
     return new Promise(resolve => items.length === categoriesLength && resolve(items))
   }
