@@ -16,7 +16,7 @@
 </svelte:head>
 
 <div class="faqs">
-  <h3 class="question" on:click={handleClick}>
+  <h3 class="question" on:click={handleClick} on:keypress={e => e.key === 'Enter' && handleClick()}>
     <span>{faq.title.rendered}</span>
     <i class:isOpen class="fa-solid fa-chevron-down" />
   </h3>

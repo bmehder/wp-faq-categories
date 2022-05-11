@@ -32,7 +32,7 @@
       .then(faqs => setItems(category, categoriesLength, faqs))
       .then(items => sortBySlug(items))
       .catch(error => console.log('getFaqs:', error))
-      .finally(() => (isLoaded = true && window.dispatchEvent(new CustomEvent('csrend'))))
+      .finally(() => (isLoaded = true))
   }
 
   const getCategories = () => {
@@ -42,8 +42,6 @@
       .catch(error => console.log('getCategories:', error))
   }
 </script>
-
-<svelte:window on:csrend={() => console.log('I am finished loading')} />
 
 <div use:getCategories>
   {#if isLoaded}
