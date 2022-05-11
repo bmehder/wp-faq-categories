@@ -35,9 +35,11 @@
       .then(categories => categories.forEach(category => getFaqs(category, categories.length)))
       .catch(error => console.log('getCategories:', error))
   }
+
+  const init = () => getCategories()
 </script>
 
-<div use:getCategories>
+<div use:init>
   {#if isLoaded}
     <div in:scale>
       {#each items as { name, faqs }}
