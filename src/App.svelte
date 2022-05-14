@@ -11,29 +11,29 @@
   let items = []
   let isLoaded = false
 
-  const sortBySlug = arr => arr.sort((a, b) => (a.slug > b.slug ? 1 : -1))
+  const getFaqsByCategory = (category, numberOfCategories) => {
+    const isFinished = () => items.length === numberOfCategories
+    const setIsLoaded = () => (isLoaded = true)
 
-  const setItems = (category, categoriesLength, faqs) => {
-    const { slug, name } = category
-    items = [...items, { slug, name, faqs }]
+    const compareSortOrderByProp = prop => (a, b) => a[prop] > b[prop] ? 1 : -1
+    const sortByProp = (array, prop) => array.sort(compareSortOrderByProp(prop))
 
-    return new Promise(resolve => items.length === categoriesLength && resolve(items))
-  }
+    const setItems = ({ slug, name }, faqs) => (items = [...items, { slug, name, faqs }])
 
-  const getFaqs = (category, categoriesLength) => {
     fetch(`${URL}${FAQS_BY_CAT}=${category.id}`)
       .then(res => res.json())
-      .then(faqs => setItems(category, categoriesLength, faqs))
-      .then(items => sortBySlug(items))
-      .catch(error => console.log('getFaqs:', error))
-      .finally(() => (isLoaded = true))
+      .then(faqs => setItems(category, faqs))
+      .catch(error => console.error(error))
+      .finally(() => isFinished() && sortByProp(items, 'slug') && setIsLoaded())
   }
 
   const getCategories = () => {
     fetch(URL + FAQ_CATS)
       .then(res => res.json())
-      .then(categories => categories.forEach(category => getFaqs(category, categories.length)))
-      .catch(error => console.log('getCategories:', error))
+      .then(categories =>
+        categories.map(category => getFaqsByCategory(category, categories.length))
+      )
+      .catch(error => console.error(error))
   }
 
   const init = () => getCategories()
@@ -42,7 +42,8 @@
 <div use:init>
   {#if isLoaded}
     <div in:scale>
-      {#each items as { name, faqs }}
+      {#each items as item}
+        {@const { name, faqs } = item}
         <h2>{name}</h2>
         {#each faqs as faq}
           <Faq {faq} />
