@@ -12,34 +12,52 @@
   const responseCb = res => res.json()
   const errorCb = error => console.error(error)
 
-  const getFaqsByCategory = (category, numberOfCategories) => {
-    const endpoint = `${BASE_URL}${FAQS_BY_CAT}=${category.id}`
+  const fetchData = options =>
+    fetch(options.endpoint)
+      .then(responseCb)
+      .then(options.dataCb)
+      .catch(errorCb)
+      .finally(options.finallyCb)
 
-    const isFinished = () => items.length === numberOfCategories
+  const getFaqsByCategory = (category, numberOfCategories) => {
+    const finallyCb = () => isFinished() && sortByProp(items, 'slug') && setIsLoaded()
+
+    const setIsLoaded = () => (isLoaded = true)
 
     const compareSortOrderByProp = prop => (a, b) => a[prop] > b[prop] ? 1 : -1
 
     const sortByProp = (array, prop) => array.sort(compareSortOrderByProp(prop))
 
-    const setItems = ({ slug, name }, faqs) => (items = [...items, { slug, name, faqs }])
+    const isFinished = () => items.length === numberOfCategories
 
-    const setIsLoaded = () => (isLoaded = true)
+    const setItems = ({ slug, name }, faqs) => (items = [...items, { slug, name, faqs }])
 
     const dataCb = faqs => setItems(category, faqs)
 
-    const finallyCb = () => isFinished() && sortByProp(items, 'slug') && setIsLoaded()
+    const endpoint = `${BASE_URL}${FAQS_BY_CAT}=${category.id}`
 
-    fetch(endpoint).then(responseCb).then(dataCb).catch(errorCb).finally(finallyCb)
+    const options = {
+      endpoint,
+      dataCb,
+      finallyCb,
+    }
+
+    fetchData(options)
   }
 
   const getFaqCategories = () => {
-    const endpoint = BASE_URL + FAQ_CATS
-
     const loop = data => category => getFaqsByCategory(category, data.length)
 
     const dataCb = data => data.map(loop(data))
 
-    fetch(endpoint).then(responseCb).then(dataCb).catch(errorCb)
+    const endpoint = `${BASE_URL}${FAQ_CATS}`
+
+    const options = {
+      endpoint,
+      dataCb,
+    }
+
+    fetchData(options)
   }
 
   const init = () => getFaqCategories()

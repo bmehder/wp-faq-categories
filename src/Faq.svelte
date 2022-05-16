@@ -3,6 +3,10 @@
 
   export let faq
 
+  const title = faq.title.rendered
+  const content = faq.content.rendered
+  const chevron = 'fa-solid fa-chevron-down'
+
   let isOpen = false
 
   const handleClick = () => (isOpen = !isOpen)
@@ -19,11 +23,11 @@
 
 <div class="faqs">
   <h3 class="question" on:click={handleClick} on:keypress={handleKeypress}>
-    <span>{faq.title.rendered}</span>
-    <i class:isOpen class="fa-solid fa-chevron-down" />
+    <span>{title}</span>
+    <i class:isOpen class={chevron} />
   </h3>
   {#if isOpen}
-    <div class="answer" transition:slide>{@html faq.content.rendered}</div>
+    <div class="answer" transition:slide>{@html content}</div>
   {/if}
 </div>
 
