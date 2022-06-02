@@ -23,7 +23,7 @@
 
 <div class="faqs">
   <h3 class="question" on:click={handleClick} on:keypress={handleKeypress}>
-    <span>{title}</span>
+    <span>{@html title}</span>
     <i class:isOpen class={chevron} />
   </h3>
   {#if isOpen}
